@@ -19,4 +19,22 @@ def send_message():
 
 def receive_message():
     '''Receive an incoming message from the server and display it to the client'''
-    pass
+    while True:
+        try:
+          #Receive an incoming message from the server
+          message = client_socket.recv(BYTESIZE).decode(ENCODER)
+
+          #Check for the name flag, else show the message
+          if message == "NAME":
+              name = input("Enter your name: ")
+              client_socket.send(name.encode(ENCODER))
+          else:
+              print(message)
+        except:
+           #An error occurred, close the connection
+           print("An error occur")
+           client_socket.close()
+           break
+        
+#Start the client
+receive_message()

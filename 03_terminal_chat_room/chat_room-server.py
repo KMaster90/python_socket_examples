@@ -28,5 +28,24 @@ def receive_message(client_socket):
 
 def connect_client():
     '''Connect an incoming client to the server'''
-    pass
+    while True:
+        #Accept any incoming client connection
+        client_socket, client_address = server_socket.accept()
+        print(f"Connection with {client_address} has been established!")
 
+        #Send a NAME flag to prompt the client for their name
+        client_socket.send("NAME".encode(ENCODER))
+        client_name = client_socket.recv(BYTESIZE).decode(ENCODER)
+
+        #Add the client socket and name to appropriate lists
+        client_socket_list.append(client_socket)
+        client_name_list.append(client_name)
+
+        #Update the server, individual client, and ALL clients
+        print(f"Name of client is {client_name}\n") #server
+        client_socket.send(f"{client_name}, you have connected to the server successful!".encode(ENCODER)) #individual client
+        broadcast_message(f"{client_name} has joined the chat room!") #ALL clients
+
+#Start the server
+print("Server is listening for incoming connections...\n")
+connect_client()
