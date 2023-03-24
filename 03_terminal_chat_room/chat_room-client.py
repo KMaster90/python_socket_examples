@@ -1,5 +1,5 @@
 #Chat Client side
-import socket, threading
+import socket, threading, time
 
 ENV = ''
 
@@ -15,7 +15,12 @@ client_socket.connect((DEST_IP, DEST_PORT))
 
 def send_message():
     '''Send a message to the server to be broadcast'''
-    pass
+    while True:
+            #Get a message from the client
+            message = input("")
+
+            #Send the message to the server
+            client_socket.send(message.encode(ENCODER))
 
 def receive_message():
     '''Receive an incoming message from the server and display it to the client'''
@@ -36,5 +41,12 @@ def receive_message():
            client_socket.close()
            break
         
+#Create threads to continuosly send and receive messages
+receive_thread = threading.Thread(target=receive_message)
+send_thread = threading.Thread(target=send_message)
+
 #Start the client
-receive_message()
+receive_thread.start()
+
+time.sleep(2)
+send_thread.start()

@@ -1,15 +1,13 @@
-#Chat Server side
+#Server Side Chat Room
 import socket, threading
 
-ENV = ''
-
 #Define constants to be used
-HOST_IP = socket.gethostbyname(socket.gethostname()) if ENV == "PRODUCTION" else ""
+HOST_IP = ''
 HOST_PORT = 12345
-ENCODER = "utf-8"
+ENCODER = 'utf-8'
 BYTESIZE = 1024
 
-#Create a server socket and listen for incoming connections
+#Create a server socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((HOST_IP, HOST_PORT))
 server_socket.listen()
@@ -21,62 +19,66 @@ client_name_list = []
 def broadcast_message(message):
     '''Send a message to ALL clients connected to the server'''
     for client_socket in client_socket_list:
-        client_socket.send(message.encode(ENCODER))
+        client_socket.send(message)
 
-def receive_message(client_socket):
-    '''Receive an incoming message from a specific client and forward the message to be broadcast'''
+
+def recieve_message(client_socket):
+    '''Recieve an incoming message from a specific client and forward the message to be broadcast'''
     while True:
         try:
             #Get the name of the given client
             index = client_socket_list.index(client_socket)
             name = client_name_list[index]
-
-            #Receive an incoming message from the client
+            
+            #Recieve message from the client
             message = client_socket.recv(BYTESIZE).decode(ENCODER)
-            message = f"\033[1;92m\t{name}: {message}\033[0m"
+            message = f"\033[1;92m\t{name}: {message}\033[0m".encode(ENCODER)
             broadcast_message(message)
-
         except:
-            #An error occurred, close the connection
             #Find the index of the client socket in our list
             index = client_socket_list.index(client_socket)
             name = client_name_list[index]
 
-            #Remove the client socket and name from the appropriate lists
+            #Remove the client socket and name from lists
             client_socket_list.remove(client_socket)
             client_name_list.remove(name)
 
             #Close the client socket
             client_socket.close()
 
-            #Broadcast thant the client has left the chat room
-            broadcast_message(f"\033[5;91m\t{name} has left the chat room!\033[0m")
+            #Broadcast that the client has left the chat.
+            broadcast_message(f"\033[5;91m\t{name} has left the chat!\033[0m".encode(ENCODER))
             break
+
+
 
 def connect_client():
     '''Connect an incoming client to the server'''
     while True:
         #Accept any incoming client connection
         client_socket, client_address = server_socket.accept()
-        print(f"Connection with {client_address} has been established!")
+        print(f"Connected with {client_address}...")
 
         #Send a NAME flag to prompt the client for their name
         client_socket.send("NAME".encode(ENCODER))
         client_name = client_socket.recv(BYTESIZE).decode(ENCODER)
 
-        #Add the client socket and name to appropriate lists
+        #Add new client socket and client name to appropriate lists
         client_socket_list.append(client_socket)
         client_name_list.append(client_name)
 
         #Update the server, individual client, and ALL clients
-        print(f"Name of client is {client_name}\n") #server
-        client_socket.send(f"{client_name}, you have connected to the server successful!\n".encode(ENCODER)) #individual client
-        broadcast_message(f"{client_name} has joined the chat room!") #ALL clients
+        print(f"Name of new client is {client_name}\n") #server
+        client_socket.send(f"{client_name}, you have connected to the server!".encode(ENCODER)) #Individual client
+        broadcast_message(f"{client_name} has joined the chat!".encode(ENCODER))
 
         #Now that a new client has connected, start a thread
-        receive_thread = threading.Thread(target=receive_message, args=(client_socket,))
-        receive_thread.start()
+        recieve_thread = threading.Thread(target=recieve_message, args=(client_socket,))
+        recieve_thread.start()
+
 
 #Start the server
 print("Server is listening for incoming connections...\n")
 connect_client()
+
+
