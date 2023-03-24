@@ -1,4 +1,4 @@
-# TCP SERVER SIDE
+# TCP Server side
 
 import socket
 

@@ -1,4 +1,4 @@
-#TCP client side
+#TCP Client side
 
 import socket
 
