@@ -19,6 +19,29 @@ def function3():
 
 #If we call these functions, we see the first call MUST complete before the next
 #They are executed linearly
-function1()
-function2()
-function3()
+# function1()
+# function2()
+# function3()
+
+#WE can execute these functions concurrently using threads! We mush have a target for a thread.
+# t1 = threading.Thread(target=function1)
+# t2 = threading.Thread(target=function2)
+# t3 = threading.Thread(target=function3)
+
+#We can start the threads
+# t1.start()
+# t2.start()
+# t3.start()
+
+#Thread can only be run once. If you want to reuse, you must create a new thread
+# t1 = threading.Thread(target=function1)
+# t1.start()
+
+#If you want to 'pause' the main program until a thread is complete
+t1 = threading.Thread(target=function1)
+t2 = threading.Thread(target=function2)
+t1.start()
+# t1.join() #This will pause the main program until t1 is complete
+t2.start()
+t2.join()
+print("Threading rules!")
