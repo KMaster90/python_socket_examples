@@ -34,3 +34,6 @@ while True:
     #Send a message to the client
     client_socket.send("Welcome to the server!".encode("utf-8"))
 
+    #Close the connection
+    client_socket.close()
+    break
