@@ -14,6 +14,10 @@ server_socket.bind((ip_address, 12345))
 
 #We are not listening or accepting connections since UDP is a connectionless protocol
 
-message, address = server_socket.recvfrom(1024)
+message, address = server_socket.recvfrom(10)
+print(message.decode("utf-8"))
+print(address)
+
+message, address = server_socket.recvfrom(10)
 print(message.decode("utf-8"))
 print(address)

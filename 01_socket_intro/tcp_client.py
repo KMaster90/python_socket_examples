@@ -14,5 +14,8 @@ if env == "PRODUCTION":
 client_socket.connect((ip_address, 12345))
 
 #Receive data from the server... You must specify the max number of bytes to receive
-msg = client_socket.recv(1024)
+msg = client_socket.recv(10)
+print(msg.decode("utf-8"))
+
+msg = client_socket.recv(10)
 print(msg.decode("utf-8"))
